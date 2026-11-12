@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block page_title %}ثبت‌نام · کمد هوشمند{% endblock %}
+
+{% block content %}
+<div class="container auth-shell">
+    <div class="auth-card">
+        <p class="eyebrow">Account</p>
+        <h1>ثبت‌نام</h1>
+        <p>ایمیل و رمز عبور را وارد کنید تا کمد شخصی‌تان ساخته شود.</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="ثبت‌نام">
+        </form>
+        <div class="auth-switch">
+            حساب دارید؟ <a href="{% url 'account_login' %}">ورود</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block page_title %}کمد هوشمند · کمدت را بشناس{% endblock %}
+{% block extra_styles %}<link rel="stylesheet" href="{% static 'css/closet-landing.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container landing">
+    <section class="landing-hero">
+        <div class="landing-copy">
+            <p class="eyebrow">A little more you, every day</p>
+            <h1>کمدت را بشناس،<br><span>هوشمندانه استایل کن.</span></h1>
+            <p class="lede">همه‌ی لباس‌هایت، یک‌جا. ترکیب‌هایی که فراموششان کرده‌ای، انتخاب‌هایی که هر روز ساده‌تر می‌شوند.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{% url 'wardrobe' %}">کمد من را بساز <span aria-hidden="true">←</span></a>
+                <a class="btn btn-ghost" href="#features">امکانات را ببین</a>
+            </div>
+            <div class="landing-note"><span class="note-dot"></span>کمد شخصی تو، درست از همین‌جا شروع می‌شود.</div>
+        </div>
+        <div class="landing-art" aria-label="پیش‌نمایش کمد دیجیتال">
+            <div class="art-caption"><span>01 / YOUR EVERYDAY EDIT</span><span>TEHRAN · ۲۰۲۶</span></div>
+            <div class="art-main">
+                <img class="art-photo" src="{% static 'img/closet/look-03.jpg' %}" alt="استایل مینیمال منتخب">
+                <div class="art-index"><span>قطعه‌ی امروز</span><strong>01</strong></div>
+                <div class="art-stamp">WORN<br>YOUR WAY</div>
+            </div>
+            <div class="art-shelf">
+                <div><img src="{% static 'img/closet/look-02.jpg' %}" alt="لباس منتخب در کمد"><span>چیزهایی که داری</span></div>
+                <div><img src="{% static 'img/closet/look-01.jpg' %}" alt="پیشنهاد استایل روز"><span>ترکیب‌های تازه</span></div>
+                <div class="shelf-message"><span class="shelf-line"></span><span>کمتر فکر کن.<br>بیشتر خودت باش.</span></div>
+            </div>
+            <div class="art-orbit" aria-hidden="true">ک</div>
+        </div>
+    </section>
+
+    <section class="landing-proof" id="how-it-works">
+        <p>پوشیدنِ دوباره، اما هر بار متفاوت.</p>
+        <span>WARDROBE, REIMAGINED</span>
+    </section>
+
+    <section class="landing-features" id="features">
+        <div class="section-head">
+            <div><p class="eyebrow">Your closet, considered</p><h2>کمدی که با تو فکر می‌کند.</h2></div>
+            <p>از لباس‌هایی که همین حالا داری،<br>برای روزهایی که پیش روست.</p>
+        </div>
+        <div class="feature-grid">
+            <article class="feature-card feature-large">
+                <div class="feature-number">01</div>
+                <span class="feature-icon" aria-hidden="true">◫</span>
+                <h3>همه‌چیز، سر جای خودش</h3>
+                <p>لباس‌هایت را با تصویر و جزئیات ساده در یک کمد دیجیتال مرتب کن. رنگ، فصل و دسته‌بندی همیشه دم دست‌اند.</p>
+                <a href="{% url 'wardrobe' %}">ساختن کمد من <span aria-hidden="true">←</span></a>
+                <div class="feature-swatch"><i></i><i></i><i></i><i></i></div>
+            </article>
+            <article class="feature-card feature-outfit">
+                <div class="feature-number">02</div>
+                <div class="feature-mini-images">
+                    <img src="{% static 'img/closet/look-06.jpg' %}" alt="">
+                    <img src="{% static 'img/closet/look-03.jpg' %}" alt="">
+                    <img src="{% static 'img/closet/look-04.jpg' %}" alt="">
+                </div>
+                <h3>ترکیب‌های خودت را بساز</h3>
+                <p>قطعه‌ها را کنار هم بچین، ذخیره کن و هر وقت خواستی دوباره بپوش.</p>
+            </article>
+            <article class="feature-card feature-stylist">
+                <div class="feature-number">03</div>
+                <span class="stylist-star" aria-hidden="true">✳</span>
+                <p class="mini-label">A THOUGHTFUL SUGGESTION</p>
+                <h3>صبح‌های ساده‌تر</h3>
+                <p>پیشنهادهای شفاف و شخصی، بر اساس لباس‌های واقعی کمدت.</p>
+            </article>
+            <article class="feature-card feature-calendar">
+                <div class="feature-number">04</div>
+                <div class="calendar-mini" aria-hidden="true"><span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span><b>۲۱</b></div>
+                <h3>از قبل آماده باش</h3>
+                <p>استایل‌های هفته‌ات را برنامه‌ریزی کن؛ برای روزهایی که وقت کم است.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="landing-cta">
+        <div><p class="eyebrow">A wardrobe that feels like yours</p><h2>با همان لباس‌ها،<br>شروعی تازه.</h2></div>
+        <a class="btn btn-primary" href="{% url 'wardrobe' %}">کمد من را بساز <span aria-hidden="true">←</span></a>
+        <span class="cta-mark" aria-hidden="true">ک</span>
+    </section>
+</div>
+{% endblock %}

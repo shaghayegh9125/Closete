@@ -1,0 +1,47 @@
+"""config URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/4.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.http import HttpResponseNotFound
+from django.urls import path, include
+
+from django.conf import settings
+from django.conf.urls.static import static
+from accounts.views import CloseteLogoutView
+
+
+def deny_public_garment_media(request, filename):
+    return HttpResponseNotFound()
+
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/closet/', include('closet.urls')),
+    path(
+        'media/closet/garments/<path:filename>',
+        deny_public_garment_media,
+        name='deny-public-garment-media',
+    ),
+    path('', include('pages.urls')),
+    path('accounts/logout/', CloseteLogoutView.as_view(), name='account_logout'),
+    path('accounts/', include('allauth.urls')),
+    path('products/', include('products.urls')),
+    path('cart/', include('cart.urls')),
+    path('order/', include('orders.urls')),
+    path('payment/', include('payment.urls')),
+
+    # Rosetta (i18n)
+    path('rosetta/', include('rosetta.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

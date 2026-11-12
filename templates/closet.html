@@ -1,0 +1,178 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f4ee">
+    <title>کمد من · کمد هوشمند</title>
+    <link rel="icon" href="{% static 'img/favicon.ico' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/closet.css' %}">
+</head>
+<body class="closet-app" data-auth-state="unknown" data-images="{% static 'img/closet/' %}">
+    <a class="skip-link" href="#appMain">رفتن به محتوای اصلی</a>
+    <div class="identity-gate" id="identityGate">
+        <section class="identity-gate-card">
+            <div id="identityLoading" role="status" aria-live="polite">در حال بررسی هویت حساب…</div>
+            <div id="identityError" role="alert" hidden>
+                <p>تأیید هویت انجام نشد. اتصال را بررسی کن و دوباره تلاش کن.</p>
+                <button type="button" class="button button-primary" id="identityRetry">تلاش دوباره</button>
+            </div>
+        </section>
+    </div>
+    <div class="app-shell">
+        <aside class="sidebar" id="appSidebar" inert>
+            <div class="sidebar-header">
+                <a class="app-brand" href="{% url 'home' %}"><span class="brand-symbol">ک</span><span><strong>کمد هوشمند</strong><small>کمد هوشمند تو</small></span></a>
+                <button type="button" class="sidebar-close" id="sidebarClose" aria-label="بستن منو">×</button>
+            </div>
+            <div class="side-caption">فضای شخصی</div>
+            <nav class="side-nav" aria-label="منوی کمد">
+                <button type="button" data-view="dashboard" class="side-link is-active"><span class="nav-icon">⌂</span>نمای کلی</button>
+                <button type="button" data-view="wardrobe" class="side-link"><span class="nav-icon">▤</span>کمد لباس<span class="nav-count" id="navGarmentCount">۰</span></button>
+                <button type="button" data-view="outfits" class="side-link"><span class="nav-icon">◈</span>استایل‌های من</button>
+                <button type="button" data-view="builder" class="side-link"><span class="nav-icon">＋</span>ساخت استایل</button>
+                <button type="button" data-view="stylist" class="side-link"><span class="nav-icon">✳</span>پیشنهاد استایل</button>
+                <button type="button" data-view="calendar" class="side-link"><span class="nav-icon">▦</span>تقویم پوشش</button>
+            </nav>
+            <div class="sidebar-bottom">
+                <button type="button" data-view="settings" class="side-link"><span class="nav-icon">⚙</span>تنظیمات</button>
+                <a class="back-home" href="{% url 'home' %}"><span aria-hidden="true">↗</span> بازگشت به خانه</a>
+                <div class="sidebar-note"><span class="note-spark">✳</span><span>استایل خوب،<br>از شناخت کمدت شروع می‌شود.</span></div>
+            </div>
+        </aside>
+
+        <div class="app-main">
+            <header class="app-topbar">
+                <button type="button" class="mobile-menu" id="mobileMenu" aria-label="باز کردن منو" aria-expanded="false" aria-controls="appSidebar">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topbar-context"><span class="context-dot"></span><span>فضای شخصی تو</span></div>
+                <div class="topbar-actions">
+                    <span class="today-label" id="todayLabel"></span>
+                    <button class="avatar-button" type="button" data-view="settings" aria-label="تنظیمات پروفایل"><span id="avatarInitial">م</span></button>
+                </div>
+            </header>
+            <main id="appMain" class="main-content" tabindex="-1">
+                <section class="app-view is-visible" data-page="dashboard">
+                    <div class="page-heading dashboard-heading">
+                        <div><p class="eyebrow" id="welcomeEyebrow">MONDAY, YOUR WAY</p><h1><span id="welcomeName">سلام، دوست من</span> <span class="wave">☀</span></h1><p class="page-description">امروز را با لباسی شروع کن که حس خوبی به تو می‌دهد.</p></div>
+                        <button type="button" class="button button-primary" data-action="add-garment"><span>＋</span> افزودن لباس</button>
+                    </div>
+                    <div class="dashboard-grid">
+                        <article class="today-card">
+                            <div class="today-copy"><p class="eyebrow">TODAY'S EDIT <span class="tiny-line"></span></p><h2>استایل امروز</h2><p id="todayOutfitText">یک ترکیب ساده، برای یک روز خوب.</p><button type="button" class="text-action" data-view="stylist">دیدن پیشنهادها <span>←</span></button></div>
+                            <div class="today-collage" id="todayCollage"></div>
+                            <div class="today-date" id="todayDate"></div>
+                        </article>
+                        <div class="metric-stack">
+                            <article class="metric-card metric-wardrobe"><span class="metric-icon">▤</span><p>لباس‌های کمد</p><strong id="metricGarments">۰</strong><small>قطعه‌ی دوست‌داشتنی</small></article>
+                            <article class="metric-card metric-outfits"><span class="metric-icon">◈</span><p>استایل‌های ذخیره‌شده</p><strong id="metricOutfits">۰</strong><small>ترکیب برای روزهای پیش رو</small></article>
+                            <article class="metric-card metric-favorites"><span class="metric-icon">♡</span><p>محبوب‌های تو</p><strong id="metricFavorites">۰</strong><small>لباس‌هایی که بیشتر می‌پوشی</small></article>
+                        </div>
+                    </div>
+                    <div class="dashboard-lower">
+                        <section class="panel recent-panel"><div class="panel-heading"><div><p class="eyebrow">JUST ARRIVED</p><h2>تازه‌های کمد</h2></div><button type="button" class="text-action" data-view="wardrobe">همه‌ی لباس‌ها <span>←</span></button></div><div class="recent-list" id="recentGarments"></div></section>
+                        <section class="panel plans-panel"><div class="panel-heading"><div><p class="eyebrow">A LITTLE AHEAD</p><h2>روزهای برنامه‌ریزی‌شده</h2></div><button type="button" class="text-action" data-view="calendar">تقویم <span>←</span></button></div><div id="upcomingPlans"></div></section>
+                    </div>
+                </section>
+
+                <section class="app-view" data-page="wardrobe" hidden>
+                    <div class="page-heading"><div><p class="eyebrow">YOUR PERSONAL ARCHIVE</p><h1>کمد لباس</h1><p class="page-description">هر تکه از لباس‌هایت، با جایی برای خودش.</p></div><button type="button" class="button button-primary" data-action="add-garment"><span>＋</span> افزودن لباس</button></div>
+                    <div class="wardrobe-mode-tabs" role="group" aria-label="انتخاب منبع کمد">
+                        <button type="button" class="is-active" data-wardrobe-mode="server" aria-pressed="true">کمد سرور</button>
+                        <button type="button" data-wardrobe-mode="legacy" aria-pressed="false">کمد قدیمی</button>
+                    </div>
+                    <div id="serverWardrobeStatus" class="server-wardrobe-status" role="status" aria-live="polite"></div>
+                    <div class="garment-grid" id="serverGarmentGrid" hidden></div>
+                    <section class="server-archived-section" id="serverArchivedSection" aria-labelledby="serverArchivedHeading" hidden>
+                        <div class="panel-heading"><div><p class="eyebrow">KEPT FOR LATER</p><h2 id="serverArchivedHeading">لباس‌های آرشیوشده</h2></div></div>
+                        <p id="serverArchivedStatus" class="server-archived-status" role="status" aria-live="polite"></p>
+                        <div class="garment-grid" id="serverArchivedGrid" hidden></div>
+                    </section>
+                    <div id="legacyWardrobeContent" hidden>
+                        <p class="legacy-readonly-note">این کمد قدیمی فقط برای مشاهده است؛ داده‌های آن تغییر نمی‌کنند.</p>
+                        <div class="wardrobe-tools">
+                            <label class="search-box"><span aria-hidden="true">⌕</span><input type="search" id="garmentSearch" placeholder="جست‌وجو در کمد قدیمی..." aria-label="جست‌وجوی لباس قدیمی"></label>
+                            <label class="select-label"><span class="visually-hidden">مرتب‌سازی</span><select id="sortGarments"><option value="recent">تازه‌ترین</option><option value="name">نام لباس</option><option value="favorites">محبوب‌ها</option></select></label>
+                        </div>
+                        <div class="filter-row" id="categoryFilters" aria-label="فیلتر دسته‌بندی"></div>
+                        <div class="advanced-filters">
+                            <label><span>رنگ</span><select id="colorFilter"><option value="">همه‌ی رنگ‌ها</option><option>کرم</option><option>مشکی</option><option>سفید</option><option>قهوه‌ای</option><option>زیتونی</option><option>سرمه‌ای</option><option>خاکستری</option><option>زرشکی</option></select></label>
+                            <label><span>فصل</span><select id="seasonFilter"><option value="">همه‌ی فصل‌ها</option><option>بهار</option><option>تابستان</option><option>پاییز</option><option>زمستان</option><option>چهارفصل</option></select></label>
+                            <label><span>مناسبت</span><select id="occasionFilter"><option value="">همه‌ی مناسبت‌ها</option><option>روزمره</option><option>دانشگاه</option><option>محل کار</option><option>مهمانی</option><option>رسمی</option></select></label>
+                            <button type="button" class="clear-filters" id="clearFilters">پاک کردن فیلترها</button>
+                        </div>
+                        <div class="results-caption"><span id="garmentResults"></span><span id="activeFilters"></span></div>
+                        <div class="garment-grid" id="legacyGarmentGrid"></div>
+                    </div>
+                </section>
+
+                <section class="app-view" data-page="outfits" hidden>
+                    <div class="page-heading"><div><p class="eyebrow">THE ART OF GETTING DRESSED</p><h1>استایل‌های من</h1><p class="page-description">ترکیب‌هایی که دوست داری، برای دوباره پوشیدن.</p></div><button type="button" class="button button-primary" data-view="builder"><span>＋</span> ساخت استایل</button></div>
+                    <div class="wardrobe-mode-tabs outfit-source-tabs" role="group" aria-label="انتخاب منبع استایل">
+                        <button type="button" data-outfit-source="server" aria-pressed="true">استایل‌های سرور</button>
+                        <button type="button" data-outfit-source="legacy" aria-pressed="false">استایل‌های قدیمی</button>
+                    </div>
+                    <section id="serverOutfitContent" aria-labelledby="serverOutfitHeading">
+                        <h2 class="outfit-source-heading" id="serverOutfitHeading">استایل‌های ذخیره‌شده در کمد سرور</h2>
+                        <div id="serverOutfitStatus" class="server-outfit-status" role="status" aria-live="polite"></div>
+                        <div class="outfit-grid" id="serverOutfitGrid" hidden></div>
+                    </section>
+                    <div id="legacyOutfitContent" hidden>
+                        <div class="outfit-grid" id="outfitGrid"></div>
+                    </div>
+                </section>
+
+                <section class="app-view" data-page="builder" hidden>
+                    <div class="page-heading"><div><p class="eyebrow">MIX, MATCH, MAKE IT YOURS</p><h1 id="builderHeading">ساخت یک استایل تازه</h1><p class="page-description">برای انتخاب هر قطعه، روی آن بزن؛ ترکیب نهایی را همین‌جا ببین.</p></div><button type="button" class="button button-quiet" data-view="outfits">استایل‌های ذخیره‌شده</button></div>
+                    <div class="builder-layout">
+                        <section class="panel builder-picker"><div class="panel-heading"><div><p class="eyebrow">FROM YOUR WARDROBE</p><h2>انتخاب لباس‌ها</h2></div></div><div class="builder-categories" id="builderCategories"></div><div class="builder-items" id="builderItems"></div></section>
+                        <section class="panel outfit-canvas"><div class="canvas-heading"><p class="eyebrow">YOUR COMBINATION</p><span id="selectedCount">۰ قطعه</span></div><div class="canvas-items" id="canvasItems"></div><div class="canvas-fields"><label>نام استایل<input type="text" id="outfitName" maxlength="50" placeholder="مثلاً عصرِ آرام"></label><label>مناسبت<select id="outfitOccasion"><option value="">انتخاب مناسبت</option><option>روزمره</option><option>دانشگاه</option><option>محل کار</option><option>مهمانی</option><option>رسمی</option></select></label><label>فصل<select id="outfitSeason"><option value="">چهارفصل</option><option>بهار</option><option>تابستان</option><option>پاییز</option><option>زمستان</option></select></label><button type="button" class="button button-primary button-wide" id="saveOutfit">ذخیره‌ی استایل</button><button type="button" class="button button-quiet button-wide" id="cancelBuilder">پاک کردن انتخاب‌ها</button></div></section>
+                    </div>
+                </section>
+
+                <section class="app-view" data-page="stylist" hidden>
+                    <div class="page-heading"><div><p class="eyebrow">THOUGHTFUL, NOT ARTIFICIAL</p><h1>پیشنهاد استایل</h1><p class="page-description">ترکیب‌هایی بر اساس لباس‌های خودت؛ بدون سرویس بیرونی یا هوش مصنوعی متصل.</p></div></div>
+                    <section class="panel stylist-controls"><div class="stylist-intro"><span class="stylist-flower">✳</span><div><h2>برای کجا آماده می‌شوی؟</h2><p>چند انتخاب ساده کمک می‌کند پیشنهادها به حال‌وهوایت نزدیک‌تر شوند.</p></div></div><div class="stylist-fields"><label>مناسبت<select id="stylistOccasion"><option>روزمره</option><option>دانشگاه</option><option>محل کار</option><option>مهمانی</option><option>رسمی</option></select></label><label>فصل<select id="stylistSeason"><option value="">فرقی نمی‌کند</option><option>بهار</option><option>تابستان</option><option>پاییز</option><option>زمستان</option></select></label><label>پالت رنگ<select id="stylistPalette"><option value="any">هر رنگی</option><option value="neutral">خنثی و آرام</option><option value="earth">طبیعت و خاک</option><option value="dark">تیره و عمیق</option></select></label><button type="button" class="button button-primary" id="generateLooks">پیشنهاد بده <span>✳</span></button></div></section>
+                    <div class="stylist-results-head"><div><p class="eyebrow">MADE FROM YOUR OWN PIECES</p><h2>ترکیب‌هایی برای تو</h2></div><button type="button" class="button button-quiet" id="regenerateLooks">تازه‌سازی پیشنهادها ↻</button></div>
+                    <div class="recommendation-grid" id="recommendationGrid"></div>
+                </section>
+
+                <section class="app-view" data-page="calendar" hidden>
+                    <div class="page-heading"><div><p class="eyebrow">PLAN A LITTLE, FEEL READY</p><h1>تقویم پوشش</h1><p class="page-description">روزهای پیش رو را با استایل‌هایی که دوست داری بچین.</p></div></div>
+                    <div class="calendar-layout"><section class="panel calendar-panel"><div class="calendar-head"><button type="button" id="prevMonth" class="month-arrow" aria-label="ماه قبل">→</button><h2 id="calendarMonth"></h2><button type="button" id="nextMonth" class="month-arrow" aria-label="ماه بعد">←</button></div><p class="server-outfit-status" id="calendarStatus" role="status" aria-live="polite" hidden></p><div class="calendar-grid" id="calendarGrid"></div></section><section class="panel day-panel"><p class="eyebrow">YOUR PLAN</p><h2 id="selectedDateLabel"></h2><div id="dayPlan"></div><form id="planForm" class="plan-form"><label for="planOutfit">استایل این روز</label><select id="planOutfit" required></select><button class="button button-primary button-wide" type="submit">ثبت برنامه</button></form></section></div>
+                </section>
+
+                <section class="app-view" data-page="settings" hidden>
+                    <div class="page-heading"><div><p class="eyebrow">A LITTLE MORE ABOUT YOU</p><h1>تنظیمات من</h1><p class="page-description">کمدت را با سلیقه‌ی خودت هماهنگ کن.</p></div></div>
+                    <form class="panel settings-form" id="settingsForm"><div class="settings-intro"><span class="settings-avatar" id="settingsAvatar">م</span><div><h2>پروفایل شخصی</h2><p>تنظیمات حساب کاربری از سرور دریافت و در همان حساب ذخیره می‌شود.</p></div></div><label>اسم تو<input type="text" id="displayName" maxlength="40" required></label><label>استایل مورد علاقه<select id="preferredStyle"><option>مینیمال</option><option>کژوال</option><option>کلاسیک</option><option>رسمی</option><option>رنگی و جسور</option></select></label><fieldset><legend>پالت رنگ دلخواه</legend><div class="palette-options"><label><input type="radio" name="palette" value="neutral"><span class="palette-dots"><i></i><i></i><i></i></span><span>خنثی</span></label><label><input type="radio" name="palette" value="earth"><span class="palette-dots earth-dots"><i></i><i></i><i></i></span><span>طبیعت</span></label><label><input type="radio" name="palette" value="dark"><span class="palette-dots dark-dots"><i></i><i></i><i></i></span><span>عمیق</span></label></div></fieldset><div class="settings-bottom"><p>این تنظیمات در حساب کاربری ذخیره می‌شوند.</p><button type="submit" class="button button-primary">ذخیره‌ی تغییرات</button></div></form>
+                </section>
+            </main>
+        </div>
+    </div>
+    <button type="button" class="sidebar-backdrop" id="sidebarBackdrop" aria-label="بستن منو" aria-hidden="true" tabindex="-1"></button>
+    <div class="modal-backdrop" id="modalBackdrop" hidden><section class="form-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><p class="eyebrow">YOUR CLOSET, YOUR RULES</p><h2 id="modalTitle">افزودن لباس</h2></div><button type="button" class="modal-close" id="closeModal" aria-label="بستن">×</button></div><form id="garmentForm"><input type="hidden" id="garmentId">{% csrf_token %}<label class="upload-field" for="garmentImage"><span class="upload-preview" id="uploadPreview">＋</span><span><strong>تصویر لباس</strong><small>یک عکس از دستگاهت انتخاب کن</small></span><input id="garmentImage" name="image" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="form-grid"><label>نام لباس<input id="garmentName" name="name" type="text" maxlength="200" required placeholder="مثلاً پیراهن سفید نخی"></label><label>دسته‌بندی<select id="garmentCategory" name="category" required></select></label><label>زیرگروه<input id="garmentSubcategory" name="subcategory" type="text" maxlength="100"></label><label>رنگ اصلی<select id="garmentColor" name="color"></select></label><label>رنگ‌های فرعی<input id="garmentSecondaryColors" type="text" placeholder="مثلاً کرم، زیتونی"><small>رنگ‌ها را با ویرگول جدا کن.</small></label><label>فصل<select id="garmentSeason" name="season"><option>چهارفصل</option><option>بهار</option><option>تابستان</option><option>پاییز</option><option>زمستان</option></select></label><label>مناسبت<select id="garmentOccasion" name="occasion"><option value="">انتخاب مناسبت</option><option>روزمره</option><option>دانشگاه</option><option>محل کار</option><option>مهمانی</option><option>رسمی</option></select></label><label>طرح<input id="garmentPattern" name="pattern" type="text" maxlength="100"></label><label>جنس<input id="garmentMaterial" name="material" type="text" maxlength="100"></label><label>سبک<input id="garmentStyle" name="style" type="text" maxlength="100"></label><label class="form-span">توضیحات<textarea id="garmentDescription" name="description" rows="3"></textarea></label></div><p class="form-error" id="formError" role="alert"></p><div class="modal-actions"><button type="button" class="button button-quiet" id="cancelModal">انصراف</button><button type="submit" class="button button-primary" id="saveGarmentButton">ذخیره‌ی لباس</button></div></form></section></div>
+    <div class="modal-backdrop" id="deleteGarmentBackdrop" hidden>
+        <section class="form-modal delete-confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="deleteGarmentTitle" aria-describedby="deleteGarmentDescription" tabindex="-1">
+            <div class="modal-head">
+                <div><p class="eyebrow">PERMANENT ACTION</p><h2 id="deleteGarmentTitle">حذف دائمی لباس</h2></div>
+                <button type="button" class="modal-close" id="closeDeleteGarment" aria-label="انصراف از حذف">×</button>
+            </div>
+            <p class="delete-confirm-name" id="deleteGarmentName"></p>
+            <p class="delete-confirm-copy" id="deleteGarmentDescription">این حذف دائمی است. اگر لباس در استایل ذخیره‌شده استفاده شده باشد، حذف انجام نمی‌شود. برای خارج‌کردن لباس از کمد فعال می‌توانید آن را آرشیو کنید.</p>
+            <p class="form-error" id="deleteGarmentError" role="alert" aria-live="assertive"></p>
+            <div class="modal-actions">
+                <button type="button" class="button button-quiet" id="cancelDeleteGarment">انصراف</button>
+                <button type="button" class="button button-danger" id="confirmDeleteGarment">حذف دائمی</button>
+            </div>
+        </section>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    {% include 'includes/session_change_broadcast.html' %}
+    <script src="{% static 'js/closet.js' %}"></script>
+</body>
+</html>

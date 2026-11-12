@@ -1,0 +1,86 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load comment_tags %}
+{% load jalali_tags %}
+{% load humanize %}
+{% load persian_translation_tags %}
+
+{% block page_title %}{{ product.title }} · کمد هوشمند{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include 'topheader.html' with header_name=product.title %}
+
+    <div class="product-layout">
+        <div class="product-gallery">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.title }}">
+            {% else %}
+                <div class="hero-fallback">بدون تصویر</div>
+            {% endif %}
+        </div>
+        <div class="product-summary">
+            <p class="eyebrow">Garment</p>
+            <h1>{{ product.title }}</h1>
+            {% if product.short_description %}
+                <p class="lede">{{ product.short_description|truncatechars:300 }}</p>
+            {% endif %}
+            <div class="price" style="font-size: 1.25rem;">
+                {{ product.price|intcomma:False|translate_number }} {% trans '$' %}
+            </div>
+            <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                {% csrf_token %}
+                <div class="qty-row">
+                    <label for="qty">تعداد</label>
+                    <input type="number" class="quantity-input" name="quantity" id="qty" value="1" min="1" max="30">
+                    <button type="submit" class="btn btn-primary">
+                        {% trans 'Add to Cart' %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="detail-sections">
+        <section class="surface">
+            <h2>{% trans 'Product Description' %}</h2>
+            <div class="prose">{{ product.description|safe }}</div>
+        </section>
+
+        <section class="surface" id="reviews">
+            <h2>نظرات ({{ product.comments.all|only_active_comments|length }})</h2>
+            <ul class="comment-list">
+                {% for comment in product.comments.all|only_active_comments %}
+                    <li class="comment-item">
+                        <div class="comment-meta">
+                            <strong>{{ comment.author.username }}</strong>
+                            <span>{{ comment.datetime_created|to_jalali:'%Y %B %d'|translate_number }} · {{ comment.get_stars_display }}</span>
+                        </div>
+                        <p>{{ comment.body }}</p>
+                    </li>
+                {% empty %}
+                    <li class="prose">هنوز نظری ثبت نشده است.</li>
+                {% endfor %}
+            </ul>
+
+            <div style="margin-top: 1.4rem;">
+                {% if user.is_authenticated %}
+                    <h3>{% trans 'Write your comment' %}</h3>
+                    <form action="{% url 'comment_create' product.id %}" method="post">
+                        {% csrf_token %}
+                        {{ comment_form|crispy }}
+                        <button class="btn btn-primary" type="submit">{% trans 'Submit' %}</button>
+                    </form>
+                {% else %}
+                    <p>
+                        {% trans 'To write your comment please ' %}
+                        <a href="{% url 'account_login' %}">{% trans 'Login' %}</a>
+                    </p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

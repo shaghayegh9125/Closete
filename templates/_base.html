@@ -1,0 +1,128 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block page_title %}کمد هوشمند{% endblock %}</title>
+    <meta name="description" content="کمد هوشمند؛ فضایی شخصی برای شناخت لباس‌ها و ساختن استایل‌های هر روز">
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/atelier.css' %}">
+    {% block extra_styles %}{% endblock %}
+</head>
+<body class="atelier">
+<div class="site-wrap">
+    <header class="site-header">
+        <div class="container header-bar">
+            <button class="icon-btn menu-toggle" type="button" data-open="#mobileNav" aria-label="منو" aria-controls="mobileNav" aria-expanded="false">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <a class="brand" href="{% url 'home' %}">
+                <span class="brand-mark">Smart</span>
+                <span class="brand-name">Wardrobe</span>
+            </a>
+            <nav class="primary-nav" aria-label="منوی اصلی">
+                <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}is-active{% endif %}">خانه</a>
+                <a href="{% url 'home' %}#features">امکانات</a>
+                <a href="{% url 'wardrobe' %}">کمد من</a>
+                <a href="{% url 'product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}is-active{% endif %}">فروشگاه</a>
+            </nav>
+            <div class="header-actions">
+                <button class="icon-btn" type="button" data-open="#searchLayer" aria-label="جستجو">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/>
+                    </svg>
+                </button>
+                <div class="account-wrap">
+                    <button class="icon-btn" type="button" data-account aria-label="حساب کاربری">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                            <circle cx="12" cy="8" r="3.2"/><path d="M5 19c1.5-3.2 4-4.8 7-4.8S17.5 15.8 19 19"/>
+                        </svg>
+                    </button>
+                    <div class="account-menu">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'account_logout' %}">{% trans 'Logout' %}</a>
+                        {% else %}
+                            <a href="{% url 'account_login' %}">{% translate 'Login' %}</a>
+                            <a href="{% url 'account_signup' %}">{% translate 'Signup' %}</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <button class="icon-btn" type="button" data-open="#miniCart" aria-label="سبد خرید">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                        <path d="M6 7h15l-1.5 9h-12z"/><path d="M6 7L5 4H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>
+                    </svg>
+                    {% if cart|length %}
+                        <span class="cart-count">{{ cart|length }}</span>
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="site-main" id="main">
+        {% if messages %}
+            <div class="flash-wrap">
+                {% for message in messages %}
+                    {% if "closete-session-changed" not in message.tags %}
+                        <div class="flash {{ message.tags }}">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'footer.html' %}
+</div>
+
+{% include 'cart/cart_sidebar.html' %}
+
+<div class="overlay" data-overlay data-close></div>
+
+<div class="search-layer" id="searchLayer">
+    <div class="search-layer-inner">
+        <div class="search-head">
+            <p class="eyebrow">Search</p>
+            <button class="icon-btn" type="button" data-close aria-label="بستن">×</button>
+        </div>
+        <form action="{% url 'product_list' %}" method="get">
+            <label class="visually-hidden" for="popup-search">جستجو</label>
+            <input type="search" name="q" id="popup-search" placeholder="جستجو در پوشاک..." value="{{ request.GET.q }}">
+        </form>
+    </div>
+</div>
+
+<div class="nav-layer" id="mobileNav" role="dialog" aria-modal="true" aria-label="منوی موبایل" aria-hidden="true" inert>
+    <div class="drawer-head">
+        <span class="brand-name">کمد هوشمند</span>
+        <button class="icon-btn" type="button" data-close aria-label="بستن">×</button>
+    </div>
+    <nav>
+        <a href="{% url 'home' %}">خانه</a>
+        <a href="{% url 'home' %}#features">امکانات</a>
+        <a href="{% url 'wardrobe' %}">کمد من</a>
+        <a href="{% url 'product_list' %}">فروشگاه</a>
+        <a href="{% url 'aboutus' %}">درباره ما</a>
+        <a href="{% url 'cart:cart_detail' %}">سبد خرید</a>
+    </nav>
+</div>
+
+<script src="{% static 'js/atelier.js' %}"></script>
+{% include 'includes/session_change_broadcast.html' %}
+<style>
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+}
+</style>
+</body>
+</html>

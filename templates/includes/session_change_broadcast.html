@@ -1,0 +1,16 @@
+{% for message in messages %}
+    {% if "closete-session-changed" in message.tags %}
+        <script>
+            (() => {
+                if (typeof BroadcastChannel !== "function") return;
+                try {
+                    const channel = new BroadcastChannel("closete-session");
+                    channel.postMessage({ type: "session-changed" });
+                    channel.close();
+                } catch (error) {
+                    console.warn("Closeté cross-tab session notifications are unavailable:", error);
+                }
+            })();
+        </script>
+    {% endif %}
+{% endfor %}

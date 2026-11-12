@@ -1,0 +1,63 @@
+{% extends '_base.html' %}
+{% load i18n %}
+{% load humanize %}
+{% load persian_translation_tags %}
+
+{% block page_title %}{% translate 'Order' %} · کمد هوشمند{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% translate 'Order' as header_name %}
+    {% include 'topheader.html' with header_name=header_name %}
+
+    <div class="checkout-layout">
+        <section class="surface">
+            <h2>جزئیات سفارش</h2>
+            <form action="" method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                    <div class="flash danger">{{ form.errors }}</div>
+                {% endif %}
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="billing_fname">نام <span class="required">*</span></label>
+                        <input type="text" name="{{ form.first_name.name }}" id="billing_fname" required>
+                    </div>
+                    <div class="field">
+                        <label for="billing_lname">نام خانوادگی <span class="required">*</span></label>
+                        <input type="text" name="{{ form.last_name.name }}" id="billing_lname" required>
+                    </div>
+                    <div class="field span-2">
+                        <label for="billing_address">آدرس</label>
+                        <input type="text" name="{{ form.address.name }}" id="billing_address">
+                    </div>
+                    <div class="field span-2">
+                        <label for="billing_phone">شماره همراه <span class="required">*</span></label>
+                        <input type="text" name="{{ form.phone_number.name }}" id="billing_phone" required>
+                    </div>
+                    <div class="field span-2">
+                        <label for="orderNotes">یادداشت شما</label>
+                        <textarea id="orderNotes" name="{{ form.order_notes.name }}" placeholder="اگر یادداشتی دارید در اینجا وارد کنید. در غیر این صورت این مکان را خالی بگذارید"></textarea>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">{% translate 'Submit' %}</button>
+            </form>
+        </section>
+
+        <aside class="summary-card">
+            <h2 style="margin-top:0;">سفارش شما</h2>
+            {% for item in cart %}
+                <div class="summary-row">
+                    <span>{{ item.product_obj.title }} × {{ item.quantity|translate_number }}</span>
+                    <span>{{ item.product_obj.price|intcomma:False|translate_number }} {% translate '$' %}</span>
+                </div>
+            {% endfor %}
+            <div class="summary-row">
+                <strong>مجموع</strong>
+                <strong>{{ cart.get_total_price|intcomma:False|translate_number }} {% translate '$' %}</strong>
+            </div>
+            <p class="prose">روش پرداخت: درگاه آنلاین زرین‌پال</p>
+        </aside>
+    </div>
+</div>
+{% endblock %}

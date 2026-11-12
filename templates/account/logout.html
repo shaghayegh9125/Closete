@@ -1,0 +1,21 @@
+{% extends '_base.html' %}
+{% load i18n %}
+
+{% block page_title %}خروج · کمد هوشمند{% endblock %}
+
+{% block content %}
+<div class="container auth-shell">
+    <div class="auth-card">
+        <p class="eyebrow">Account</p>
+        <h1>خروج از حساب</h1>
+        <p>مطمئن هستید که می‌خواهید خارج شوید؟</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            <button class="btn btn-primary btn-full" type="submit" name="submit">خروج</button>
+        </form>
+        <div class="auth-switch">
+            <a href="{% url 'home' %}">انصراف و بازگشت</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

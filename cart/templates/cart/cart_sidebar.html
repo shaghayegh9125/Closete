@@ -1,0 +1,44 @@
+{% load i18n %}
+{% load humanize %}
+{% load persian_translation_tags %}
+
+<aside class="drawer" id="miniCart" aria-label="{% translate 'Cart' %}">
+    <div class="drawer-inner">
+        <div class="drawer-head">
+            <h3>{% translate 'Cart' %}</h3>
+            <button class="icon-btn" type="button" data-close aria-label="بستن">×</button>
+        </div>
+        <ul class="mini-items">
+            {% for item in cart %}
+                <li class="mini-item">
+                    {% if item.product_obj.image %}
+                        <img src="{{ item.product_obj.image.url }}" alt="{{ item.product_obj.title }}">
+                    {% else %}
+                        <div class="cart-thumb"></div>
+                    {% endif %}
+                    <div>
+                        <a href="{{ item.product_obj.get_absolute_url }}">{{ item.product_obj.title }}</a>
+                        <div class="price">
+                            {{ item.product_obj.price|intcomma:False|translate_number }} {% translate '$' %}
+                            × {{ item.quantity|translate_number }}
+                        </div>
+                        <form method="post" action="{% url 'cart:cart_remove' item.product_obj.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-danger btn-small" type="submit">حذف</button>
+                        </form>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="prose">{% trans 'Cart is Empty! Please add some products to the cart' %}</li>
+            {% endfor %}
+        </ul>
+        <div class="summary-row">
+            <span>{% translate 'Total' %}</span>
+            <strong>{{ cart.get_total_price|intcomma:False|translate_number }} {% translate '$' %}</strong>
+        </div>
+        <a href="{% url 'cart:cart_detail' %}" class="btn btn-ghost btn-full">{% translate 'Go to cart' %}</a>
+        {% if not cart.is_empty %}
+            <a href="{% url 'order_create' %}" class="btn btn-primary btn-full" style="margin-top: 0.6rem;">{% translate 'Checkout' %}</a>
+        {% endif %}
+    </div>
+</aside>
